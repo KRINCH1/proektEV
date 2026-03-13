@@ -1,0 +1,149 @@
+﻿services:
+  postgres-user:
+    image: postgres:15
+    container_name: postgres-user
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+
+  postgres-product:
+    image: postgres:15
+    container_name: postgres-product
+    environment:
+      POSTGRES_DB: productdb
+      POSTGRES_USER: product
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-product-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+
+  postgres-order:
+    image: postgres:15
+    container_name: postgres-order
+    environment:
+      POSTGRES_DB: orderdb
+      POSTGRES_USER: order
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-order-data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce-network
+
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    networks:
+      - ecommerce-network
+
+  service-registry:
+    build: ./service-registry
+    container_name: service-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - ecommerce-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-registry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ecommerce-network
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - service-registry
+      - postgres-user
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-user:5432/userdb
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+    networks:
+      - ecommerce-network
+
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - service-registry
+      - postgres-product
+      - redis
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-product:5432/productdb
+      - SPRING_DATASOURCE_USERNAME=product
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_REDIS_HOST=redis
+    networks:
+      - ecommerce-network
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - service-registry
+      - postgres-order
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5432/orderdb
+      - SPRING_DATASOURCE_USERNAME=order
+      - SPRING_DATASOURCE_PASSWORD=password
+    networks:
+      - ecommerce-network
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - service-registry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  postgres-user-data:
+  postgres-product-data:
+  postgres-order-data:
