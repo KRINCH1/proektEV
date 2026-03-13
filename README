@@ -1,245 +1,216 @@
-# E-Commerce Microservices Platform
+E-Commerce Microservices Platform
 
-## 📋 Описание проекта
-**E-Commerce Microservices Platform** — это распределенная система интернет-магазина, построенная на микросервисной архитектуре с использованием Spring Boot и Spring Cloud. Проект демонстрирует современный подход к разработке масштабируемых и отказоустойчивых приложений.
+Описание проекта
+E-Commerce Microservices Platform — это распределенная система интернет-магазина, построенная на микросервисной архитектуре с использованием Spring Boot и Spring Cloud. Проект демонстрирует современный подход к разработке масштабируемых и отказоустойчивых приложений.
 
----
+Архитектура системы
 
-## 🏗 Архитектура системы
+Микросервисы
 
-### Микросервисы
+config-server (порт 8888) - Централизованное управление конфигурациями
+service-registry (Eureka) (порт 8761) - Реестр сервисов для обнаружения и регистрации
+api-gateway (порт 8080) - Единая точка входа, маршрутизация запросов
+user-service (порт 8081) - Управление пользователями, база данных PostgreSQL (userdb)
+product-service (порт 8082) - Управление товарами, база данных PostgreSQL (productdb) + Redis
+order-service (порт 8083) - Управление заказами, база данных PostgreSQL (orderdb)
+notification-service (порт 8084) - Логирование уведомлений
 
-| Сервис | Порт | Назначение | База данных |
-|--------|------|------------|--------------|
-| **config-server** | 8888 | Централизованное управление конфигурациями | - |
-| **service-registry** (Eureka) | 8761 | Реестр сервисов для обнаружения и регистрации | - |
-| **api-gateway** | 8080 | Единая точка входа, маршрутизация запросов | - |
-| **user-service** | 8081 | Управление пользователями | PostgreSQL (userdb) |
-| **product-service** | 8082 | Управление товарами | PostgreSQL (productdb) + Redis |
-| **order-service** | 8083 | Управление заказами | PostgreSQL (orderdb) |
-| **notification-service** | 8084 | Логирование уведомлений | - |
+Инфраструктурные компоненты
+PostgreSQL - базы данных для каждого сервиса
+Redis - кэширование для product-service
+Docker - контейнеризация всех компонентов
+Kubernetes - оркестрация контейнеров
+GitHub Actions - CI/CD pipeline
+Prometheus - мониторинг
 
-### Инфраструктурные компоненты
-- **PostgreSQL** — базы данных для каждого сервиса
-- **Redis** — кэширование для product-service
-- **Docker** — контейнеризация всех компонентов
-- **Kubernetes** — оркестрация контейнеров
-- **GitHub Actions** — CI/CD pipeline
-- **Prometheus** — мониторинг
+Технологический стек
 
----
+Backend
+Java 17
+Spring Boot 3.1.5
+Spring Cloud 2022.0.4
+Spring Data JPA
+Spring Cloud Gateway
+Spring Cloud Netflix Eureka
+Spring Cloud Config Server
+Spring Boot Actuator
+SpringDoc OpenAPI (Swagger)
+Resilience4j (Circuit Breaker)
+JJWT (JWT авторизация)
 
-## 🛠 Технологический стек
+Базы данных и кэширование
+PostgreSQL 15
+Redis 7
 
-### Backend
-- Java 17
-- Spring Boot 3.1.5
-- Spring Cloud 2022.0.4
-- Spring Data JPA
-- Spring Cloud Gateway
-- Spring Cloud Netflix Eureka
-- Spring Cloud Config Server
-- Spring Boot Actuator
-- SpringDoc OpenAPI (Swagger)
-- Resilience4j (Circuit Breaker)
-- JJWT (JWT авторизация)
+Тестирование
+JUnit 5
+Mockito
+TestContainers
+Интеграционные тесты
+API-тесты
 
-### Базы данных и кэширование
-- PostgreSQL 15
-- Redis 7
+DevOps
+Docker / Docker Compose
+Kubernetes
+GitHub Actions
+Prometheus
 
-### Тестирование
-- JUnit 5
-- Mockito
-- TestContainers
-- Интеграционные тесты
-- API-тесты
+Функциональность
 
-### DevOps
-- Docker / Docker Compose
-- Kubernetes
-- GitHub Actions
-- Prometheus
+User Service (порт 8081)
+Создание нового пользователя
+Получение пользователя по ID
+Получение списка всех пользователей
+Обновление данных пользователя
+Удаление пользователя
+Валидация входных данных
+Логирование операций
 
----
+Product Service (порт 8082)
+CRUD операции с товарами
+Фильтрация товаров по цене
+Управление остатками на складе
+Кэширование списка товаров (Redis)
+Обработка исключений
 
-## ⚙️ Функциональность
+Order Service (порт 8083)
+Создание заказа
+Получение списка заказов пользователя
+Статусы заказа (NEW, PAID, CANCELLED)
+Взаимодействие с product-service для проверки наличия товара
+Circuit Breaker (Resilience4j)
+Fallback методы
 
-### 1. User Service (порт 8081)
-- Создание нового пользователя
-- Получение пользователя по ID
-- Получение списка всех пользователей
-- Обновление данных пользователя
-- Удаление пользователя
-- Валидация входных данных
-- Логирование операций
+Notification Service (порт 8084)
+Логирование событий о создании заказов
+REST endpoint для получения истории уведомлений
 
-### 2. Product Service (порт 8082)
-- CRUD операции с товарами
-- Фильтрация товаров по цене
-- Управление остатками на складе
-- Кэширование списка товаров (Redis)
-- Обработка исключений
+Запуск проекта
 
-### 3. Order Service (порт 8083)
-- Создание заказа
-- Получение списка заказов пользователя
-- Статусы заказа (NEW, PAID, CANCELLED)
-- Взаимодействие с product-service для проверки наличия товара
-- Circuit Breaker (Resilience4j)
-- Fallback методы
+Предварительные требования
+Java 17 или выше
+Maven 3.8+
+Docker и Docker Compose
+Git
 
-### 4. Notification Service (порт 8084)
-- Логирование событий о создании заказов
-- REST endpoint для получения истории уведомлений
+Вариант 1: Запуск через Docker Compose (рекомендуется)
 
----
-
-## 🚀 Запуск проекта
-
-### Предварительные требования
-- Java 17 или выше
-- Maven 3.8+
-- Docker и Docker Compose
-- Git
-
----
-
-### Вариант 1: Запуск через Docker Compose (рекомендуется)
-
-```bash
-# 1. Клонировать репозиторий
+1. Клонировать репозиторий
 git clone <repository-url>
 cd e-commerce-platform
 
-# 2. Собрать все сервисы
+2. Собрать все сервисы
 mvn clean package -DskipTests
 
-# 3. Запустить через Docker Compose
+3. Запустить через Docker Compose
 docker-compose up -d
 
-# 4. Проверить статус
+4. Проверить статус
 docker-compose ps
 docker-compose logs -f
-...................................................................................................................
-ВРУЧНОЙ ЗАПУСК
+
+Вариант 2: Ручной запуск (пошагово)
+
 Шаг 1. Запустить базы данных
-powershell
 cd C:\Users\user\IdeaProjects\e-commerce-platform
 docker-compose up -d postgres-user postgres-product postgres-order redis
+
 Шаг 2. Запустить Config Server
-powershell
 cd config-server\target
 java -jar config-server-1.0.0.jar
+
 Шаг 3. Запустить Service Registry (Eureka)
-powershell
 cd service-registry\target
 java -jar service-registry-1.0.0.jar
 Проверка: http://localhost:8761
 
 Шаг 4. Запустить User Service
-powershell
 cd user-service\target
 java -jar user-service-1.0.0.jar
 Проверка: http://localhost:8081/actuator/health
 
 Шаг 5. Запустить Product Service
-powershell
 cd product-service\target
 java -jar product-service-1.0.0.jar
 Проверка: http://localhost:8082/actuator/health
 
 Шаг 6. Запустить Order Service
-powershell
 cd order-service\target
 java -jar order-service-1.0.0.jar
 Проверка: http://localhost:8083/actuator/health
 
 Шаг 7. Запустить Notification Service
-powershell
 cd notification-service\target
 java -jar notification-service-1.0.0.jar
 Проверка: http://localhost:8084/actuator/health
 
 Шаг 8. Запустить API Gateway
-powershell
 cd api-gateway\target
 java -jar api-gateway-1.0.0.jar
 Проверка: http://localhost:8080/actuator/health
-..................................................
-АВТОМАТИЧЕСКИЙ ЗАПУСК
+
+Вариант 3: Автоматический запуск (скрипт)
 .\start-all.ps1
-✅ Проверка работоспособности
+
+Проверка работоспособности
+
 Eureka Dashboard
-text
 http://localhost:8761
-Должны быть зарегистрированы все сервисы со статусом UP.
 
 Health checks
-Сервис	Health Check	Swagger UI
-User Service	http://localhost:8081/actuator/health	http://localhost:8081/swagger-ui.html
-Product Service	http://localhost:8082/actuator/health	http://localhost:8082/swagger-ui.html
-Order Service	http://localhost:8083/actuator/health	http://localhost:8083/swagger-ui.html
-Notification Service	http://localhost:8084/actuator/health	http://localhost:8084/swagger-ui.html
-API Gateway	http://localhost:8080/actuator/health	-
-Eureka	http://localhost:8761/actuator/health	-
-Config Server	http://localhost:8888/actuator/health	-
-📡 Тестирование API
+User Service: http://localhost:8081/actuator/health
+Product Service: http://localhost:8082/actuator/health
+Order Service: http://localhost:8083/actuator/health
+Notification Service: http://localhost:8084/actuator/health
+API Gateway: http://localhost:8080/actuator/health
+
+Swagger UI
+User Service: http://localhost:8081/swagger-ui.html
+Product Service: http://localhost:8082/swagger-ui.html
+Order Service: http://localhost:8083/swagger-ui.html
+Notification Service: http://localhost:8084/swagger-ui.html
+
+Тестирование API
+
 User Service (через API Gateway)
 Создание пользователя
-bash
-curl -X POST http://localhost:8080/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"email":"user@example.com","password":"123456","firstName":"Иван","lastName":"Петров"}'
+curl -X POST http://localhost:8080/api/users -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"123456","firstName":"Иван","lastName":"Петров"}'
+
 Получение всех пользователей
-bash
 curl http://localhost:8080/api/users
+
 Получение пользователя по ID
-bash
 curl http://localhost:8080/api/users/1
+
 Product Service (напрямую)
 Создание товара
-bash
-curl -X POST http://localhost:8082/api/products \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Ноутбук","price":75000,"quantity":10}'
+curl -X POST http://localhost:8082/api/products -H "Content-Type: application/json" -d '{"name":"Ноутбук","price":75000,"quantity":10}'
+
 Получение всех товаров
-bash
 curl http://localhost:8082/api/products
+
 Фильтрация по цене
-bash
 curl "http://localhost:8082/api/products?minPrice=10000&maxPrice=50000"
+
 Order Service (через API Gateway)
 Создание заказа
-bash
-curl -X POST http://localhost:8080/api/orders \
-  -H "Content-Type: application/json" \
-  -d '{"userId":1,"productId":1,"quantity":2}'
+curl -X POST http://localhost:8080/api/orders -H "Content-Type: application/json" -d '{"userId":1,"productId":1,"quantity":2}'
+
 Получение заказов пользователя
-bash
 curl http://localhost:8080/api/orders/user/1
-🧪 Тестирование
+
+Тестирование
+
 Запуск всех тестов
-bash
 mvn clean test
+
 Запуск тестов для конкретного сервиса
-bash
 cd user-service
 mvn clean test
-Виды тестов
-Unit-тесты — тестирование бизнес-логики (минимум 5 на сервис)
 
-Интеграционные тесты — проверка Controller → БД
+Docker
 
-API-тесты — проверка статус-кодов, JSON, ошибок
-
-Тесты отказоустойчивости — Circuit Breaker, fallback
-
-Smoke-тесты — после запуска через Docker Compose
-
-🐳 Docker
 Сборка образов
-bash
 docker build -t user-service ./user-service
 docker build -t product-service ./product-service
 docker build -t order-service ./order-service
@@ -247,120 +218,66 @@ docker build -t notification-service ./notification-service
 docker build -t api-gateway ./api-gateway
 docker build -t service-registry ./service-registry
 docker build -t config-server ./config-server
+
 Управление контейнерами
-bash
-# Запуск всех сервисов
-docker-compose up -d
+Запуск всех сервисов: docker-compose up -d
+Просмотр логов: docker-compose logs -f
+Остановка всех сервисов: docker-compose down
 
-# Просмотр логов
-docker-compose logs -f
+Kubernetes
 
-# Остановка всех сервисов
-docker-compose down
-
-# Запуск только баз данных
-docker-compose up -d postgres-user postgres-product postgres-order redis
-☸️ Kubernetes
 Применение манифестов
-bash
 kubectl apply -f kubernetes/
+
 Проверка состояния
-bash
 kubectl get pods
 kubectl get services
 kubectl get deployments
+
 Масштабирование сервиса
-bash
 kubectl scale deployment user-service --replicas=3
-Просмотр логов
-bash
-kubectl logs -f deployment/user-service
-🔄 CI/CD (GitHub Actions)
-Pipeline выполняет:
 
-Запуск тестов
+Остановка сервисов
 
-Сборку проекта
-
-Сборку Docker-образов
-
-Публикацию в registry
-
-Файл конфигурации: .github/workflows/ci-cd.yml
-
-📊 Мониторинг (Prometheus)
-Каждый сервис предоставляет метрики через Actuator:
-
-http://localhost:8081/actuator/prometheus
-
-http://localhost:8082/actuator/prometheus
-
-http://localhost:8083/actuator/prometheus
-
-http://localhost:8084/actuator/prometheus
-
-http://localhost:8080/actuator/prometheus
-
-🛑 Остановка сервисов
 Ручная остановка
 В каждом терминале нажмите Ctrl+C
 
 Остановка баз данных
-powershell
-cd C:\Users\user\IdeaProjects\e-commerce-platform
 docker-compose down
-Остановка всех Java процессов (экстренно)
-powershell
+
+Остановка всех Java процессов
 Get-Process -Name "java" | Stop-Process
-🔧 Устранение неполадок
+
+Устранение неполадок
+
 Ошибка "Address already in use" (порт занят)
-powershell
-# Найти процесс, занимающий порт 8081
 netstat -ano | findstr :8081
-
-# Завершить процесс (PID — последняя колонка)
 taskkill /PID <PID> /F
-Ошибка "Connection refused" при подключении к БД
-powershell
-# Проверить, запущена ли база данных
-docker ps | findstr postgres
 
-# Если не запущена, запустить:
+Ошибка "Connection refused" при подключении к БД
+docker ps | findstr postgres
 docker-compose up -d postgres-user
+
 Ошибка "Illegal character: '\ufeff'" при компиляции
-Проблема с кодировкой BOM. Исправить в Notepad++: Encoding → Convert to UTF-8
+Проблема с кодировкой BOM. Исправить в Notepad++: Encoding -> Convert to UTF-8
 
 Ошибка "no main manifest attribute" при запуске JAR
-powershell
-# Пересобрать сервис
 cd user-service
 mvn clean package
-Сервис не регистрируется в Eureka
-Убедитесь, что Eureka запущен до сервиса
 
-Проверьте логи сервиса на наличие ошибок подключения
+Структура проекта
 
-Перезапустите сервис после запуска Eureka
-
-Docker не запускается
-powershell
-# Проверить статус
-docker info
-
-# Запустить Docker Desktop
-Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"
-📁 Структура проекта
-text
 e-commerce-platform/
-├── config-server/                 # Централизованная конфигурация
-├── service-registry/               # Eureka Server
-├── api-gateway/                    # Spring Cloud Gateway
-├── user-service/                    # Управление пользователями
-├── product-service/                 # Управление товарами
-├── order-service/                   # Управление заказами
-├── notification-service/            # Уведомления
-├── kubernetes/                      # Kubernetes манифесты
-├── .github/workflows/               # GitHub Actions
-├── docker-compose.yml               # Docker Compose
-├── pom.xml                          # Родительский POM
-└── README.md                        # Этот файл
+├── config-server/
+├── service-registry/
+├── api-gateway/
+├── user-service/
+├── product-service/
+├── order-service/
+├── notification-service/
+├── kubernetes/
+├── .github/workflows/
+├── docker-compose.yml
+├── pom.xml
+└── README.md
+
